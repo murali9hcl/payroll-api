@@ -185,9 +185,87 @@ Supported document uploads include identity and onboarding documents.
 
 Employee Search
 
+
+#### Request Body
+
+```json
+{
+  "id": 101,
+  "name": "Priya Sharma",
+  "email": "priya@zexovo.com",
+  "role": "Warehouse Associate",
+  "department": "Operations",
+  "assignedLocation": {
+    "id": "wh-4-north",
+    "name": "Warehouse 4, Northern Sector",
+    "geofenceRadiusMeters": 75
+  },
+  "manager": {
+    "id": 87,
+    "name": "Sarah Jenkins"
+  },
+  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
+}
+```
+
+#### Response Body
+
 ```json
 {
   "code": "EMPLOYEE_NOT_FOUND",
   "message": "Employee not found"
 }
 ```
+
+GET /api/v1/employee/dashboard
+
+Employee Details for Dashboard
+
+
+#### Response Body
+
+```json
+{
+  "greeting": "Good Morning",
+  "date": "2026-04-26",
+  "banner": {
+    "type": "within_radius",
+    "message": "Within building radius",
+    "severity": "success"
+  },
+  "shift": {
+    "status": "clocked_in",
+    "scheduledHours": 8.00,
+    "workedHours": 7.72,
+    "remainingHours": 0.28,
+    "clockInTime": "2026-04-26T09:02:00+05:30",
+    "expectedClockOut": "2026-04-26T17:00:00+05:30"
+  },
+  "weeklySummary": {
+    "totalHours": 39.72,
+    "remainingHours": 0.28,
+    "flsaThresholdHours": 40,
+    "approachingOvertime": true
+  },
+  "alerts": [
+    {
+      "id": "alrt_882",
+      "type": "presence_alert_sent_to_manager",
+      "message": "You have been outside the work radius for more than 1 hour today.",
+      "severity": "warning",
+      "createdAt": "2026-04-26T13:48:00+05:30"
+    }
+  ],
+  "upcomingShifts": [
+    {
+      "id": "shf_2031",
+      "date": "2026-04-19",
+      "startTime": "09:00",
+      "endTime": "17:00",
+      "location": "Warehouse 4, Northern Sector",
+      "assignedBy": "Sarah Jenkins"
+    }
+  ]
+}
+```
+
