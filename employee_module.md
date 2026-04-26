@@ -2,39 +2,6 @@
 
 ## Endpoints
 
-### POST `/api/v1/auth/login`
-
-Authenticates a user and returns a JWT token with basic user details.
-
-#### Request Body
-
-```json
-{
-  "email": "user@test.com",
-  "password": "******"
-}
-```
-#### Response Body
-
-```json
-{
-  "token": "jwt_token",
-  "user": {
-    "id": 101,
-    "name": "Murali"
-  }
-}
-```
-
-#### Response Negative 
-
-```json
-{
- "code":"INVALID_CREDENTIALS",
- "message":"Wrong username/password"
-}
-```
-
 ### GET `/api/v1/employees?page=1&size=20&search=rahul&status=ACTIVE&department=ENG`
 
 Employee search API
