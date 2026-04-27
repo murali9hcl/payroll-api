@@ -1,91 +1,8 @@
-# Employee Module
-
 ## Endpoints
 
-## Employee Self-Service
+### GET `/api/v1/employees?page=1&size=20&search=priya&status=ACTIVE&department=Operations`
 
-### GET `/api/v1/employee/me`
-
-Logged-in employee's own profile. Different from `GET /api/v1/employee/dashboard`, which returns the daily aggregate.
-
-#### Response Body
-
-```json
-{
-  "id": 101,
-  "name": "Priya Sharma",
-  "email": "priya@zexovo.com",
-  "role": "Warehouse Associate",
-  "department": "Operations",
-  "manager": {
-    "id": 87,
-    "name": "Sarah Jenkins"
-  },
-  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
-}
-```
-
----
-
-### PATCH `/api/v1/employee/me`
-
-Self-update of contact info such as phone, address, and emergency contact.
-
-#### Request Body
-
-```json
-{
-  "phone": "9999999999",
-  "address": "Flat 4B, Banjara Hills, Hyderabad",
-  "emergencyContact": {
-    "name": "Anita Sharma",
-    "relation": "Spouse",
-    "phone": "9888887777"
-  }
-}
-```
-
-#### Response Body
-
-```json
-{
-  "success": true,
-  "updatedFields": [
-    "phone",
-    "address",
-    "emergencyContact"
-  ]
-}
-```
-
----
-
-### POST `/api/v1/employee/me/avatar`
-
-Uploads employee profile photo.
-
-#### Content Type
-
-`multipart/form-data`
-
-#### Multipart Fields
-
-| Field | Type | Required | Description              |
-| ----- | ---- | -------- | ------------------------ |
-| file  | file | Yes      | JPEG/PNG image, max 5 MB |
-
-#### Response Body
-
-```json
-{
-  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
-}
-```
-
-
-### GET `/api/v1/employees?page=1&size=20&search=rahul&status=ACTIVE&department=ENG`
-
-Employee search API
+Lists / searches employees.
 
 #### Response Body
 
@@ -94,13 +11,14 @@ Employee search API
   "data": [
     {
       "employeeId": "EMP1001",
-      "firstName": "Rahul",
+      "firstName": "Priya",
       "lastName": "Sharma",
-      "email": "rahul@company.com",
-      "phone": "9876543210",
-      "designation": "Software Engineer",
-      "department": "Engineering",
+      "email": "priya@zexovo.com",
+      "phone": "+19045551234",
+      "designation": "Floor Supervisor",
+      "department": "Operations",
       "managerId": "EMP1000",
+      "payType": "hourly",
       "status": "ACTIVE",
       "joiningDate": "2024-02-10"
     }
@@ -109,12 +27,13 @@ Employee search API
   "size": 20,
   "total": 143
 }
-
 ```
+
+---
 
 ### GET `/api/v1/employees/{employeeId}`
 
-GET Employee details by ID API
+Full employee profile.
 
 #### Response Body
 
@@ -122,48 +41,85 @@ GET Employee details by ID API
 {
   "employeeId": "EMP1001",
   "personalInfo": {
-    "firstName": "Rahul",
+    "firstName": "Priya",
     "lastName": "Sharma",
     "dob": "1995-08-10",
-    "gender": "MALE",
+    "gender": "FEMALE",
     "maritalStatus": "SINGLE"
   },
   "contactInfo": {
-    "email": "rahul@company.com",
-    "phone": "9876543210",
-    "address": "Bengaluru"
+    "email": "priya@zexovo.com",
+    "phone": "+19045551234",
+    "address": "Orlando, FL"
   },
   "jobInfo": {
-    "department": "Engineering",
-    "designation": "Software Engineer",
+    "department": "Operations",
+    "designation": "Floor Supervisor",
     "managerId": "EMP1000",
     "joiningDate": "2024-02-10",
-    "employmentType": "FULL_TIME"
+    "employmentType": "FULL_TIME",
+    "state": "FL"
+  },
+  "pay": {
+    "type": "hourly",
+    "hourlyRate": 2200,
+    "currency": "USD"
+  },
+  "tax": {
+    "filingStatus": "single",
+    "ssnLast4": "4421",
+    "exemptions": 1,
+    "w4OnFile": true
+  },
+  "disbursement": {
+    "method": "direct_deposit",
+    "bankAccountLast4": "7890"
   },
   "status": "ACTIVE"
 }
-
 ```
 
-###  POST /api/v1/employees
+---
 
-Create Employee
+### POST `/api/v1/employees`
+
+Creates a new employee.
 
 #### Request Body
 
 ```json
 {
-  "firstName": "Rahul",
+  "firstName": "Priya",
   "lastName": "Sharma",
-  "email": "rahul@company.com",
-  "phone": "9876543210",
+  "email": "priya@zexovo.com",
+  "phone": "+19045551234",
   "departmentId": "D100",
   "designationId": "DES200",
   "managerId": "EMP1000",
   "joiningDate": "2026-04-22",
-  "employmentType": "FULL_TIME"
+  "employmentType": "FULL_TIME",
+  "state": "FL",
+  "pay": {
+    "type": "hourly",
+    "hourlyRate": 2200,
+    "currency": "USD"
+  },
+  "tax": {
+    "filingStatus": "single",
+    "ssnLast4": "4421",
+    "exemptions": 1,
+    "w4OnFile": true
+  },
+  "disbursement": {
+    "method": "direct_deposit",
+    "bank": {
+      "accountHolderName": "Priya Sharma",
+      "routingNumber": "021000021",
+      "accountNumber": "1234567890",
+      "accountType": "checking"
+    }
+  }
 }
-
 ```
 
 #### Response Body
@@ -173,27 +129,50 @@ Create Employee
   "employeeId": "EMP1001",
   "message": "Employee created successfully"
 }
-
 ```
 
-###  PUT /api/v1/employees/{employeeId}
+---
 
-Update Employee
+### PUT `/api/v1/employees/{employeeId}`
+
+Updates an employee.
 
 #### Request Body
 
 ```json
 {
-  "phone": "9999999999",
+  "phone": "+19045559999",
   "designationId": "DES300",
-  "managerId": "EMP1002"
+  "managerId": "EMP1002",
+  "pay": {
+    "type": "hourly",
+    "hourlyRate": 2400,
+    "currency": "USD"
+  }
 }
-
 ```
 
-### PATCH /api/v1/employees/{employeeId}/status
+#### Response Body
 
-Deactive Employee
+```json
+{
+  "employeeId": "EMP1001",
+  "updatedFields": [
+    "phone",
+    "designationId",
+    "managerId",
+    "pay"
+  ]
+}
+```
+
+---
+
+### PATCH `/api/v1/employees/{employeeId}/status`
+
+Activates / deactivates an employee.
+
+#### Request Body
 
 ```json
 {
@@ -203,72 +182,102 @@ Deactive Employee
 }
 ```
 
-### POST `/api/v1/employees/{employeeId}/documents`
-
-Uploads a document for a specific employee.
-
-#### Path Parameters
-
-| Parameter   | Type   | Required | Description |
-|------------|--------|----------|-------------|
-| employeeId | number | Yes | Unique employee ID |
-
-#### Description
-
-Supported document uploads include identity and onboarding documents.
-
-#### Content Type
-
-`multipart/form-data`
-
-#### Multipart Fields
-
-| Field        | Type   | Required | Description |
-|-------------|--------|----------|-------------|
-| file        | file   | Yes | Document file to upload |
-| documentType | string | Yes | Type of document |
-
-
-### GET /api/v1/employees/search?q=rah
-
-Employee Search
-
-
-#### Request Body
+#### Response Body
 
 ```json
 {
-  "id": 101,
-  "name": "Priya Sharma",
-  "email": "priya@zexovo.com",
-  "role": "Warehouse Associate",
-  "department": "Operations",
-  "assignedLocation": {
-    "id": "wh-4-north",
-    "name": "Warehouse 4, Northern Sector",
-    "geofenceRadiusMeters": 75
-  },
-  "manager": {
-    "id": 87,
-    "name": "Sarah Jenkins"
-  },
-  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
+  "employeeId": "EMP1001",
+  "status": "INACTIVE",
+  "lastWorkingDate": "2026-05-30"
 }
 ```
+
+---
+
+## Documents
+
+### POST `/api/v1/employees/{employeeId}/documents`
+
+Uploads a document.
+
+#### Request Body (multipart/form-data)
+
+| Field        | Type   | Required | Description                                                |
+| ------------ | ------ | -------- | ---------------------------------------------------------- |
+| file         | file   | Yes      | PDF / JPEG / PNG, max 10 MB                                |
+| documentType | string | Yes      | id_proof / address_proof / offer_letter / contract / other |
 
 #### Response Body
 
 ```json
 {
-  "code": "EMPLOYEE_NOT_FOUND",
-  "message": "Employee not found"
+  "id": "doc_4421",
+  "documentType": "id_proof",
+  "fileName": "drivers_license.pdf",
+  "uploadedAt": "2026-04-26T10:14:00-04:00"
 }
 ```
 
-GET /api/v1/employee/dashboard
+---
 
-Employee Details for Dashboard
+### GET `/api/v1/employees/{employeeId}/documents`
 
+Lists employee documents.
+
+#### Response Body
+
+```json
+{
+  "documents": [
+    {
+      "id": "doc_4421",
+      "documentType": "id_proof",
+      "fileName": "drivers_license.pdf",
+      "uploadedAt": "2026-04-26T10:14:00-04:00",
+      "fileSizeBytes": 144211
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/v1/employees/{employeeId}/documents/{documentId}/download`
+
+Returns signed download URL.
+
+#### Response Body
+
+```json
+{
+  "id": "doc_4421",
+  "url": "https://files.zexovo.com/signed/doc_4421?token=...",
+  "expiresAt": "2026-04-26T11:14:00-04:00"
+}
+```
+
+---
+
+### DELETE `/api/v1/employees/{employeeId}/documents/{documentId}`
+
+Deletes a document.
+
+#### Response Body
+
+```json
+{
+  "id": "doc_4421",
+  "deleted": true
+}
+```
+
+---
+
+## Employee Dashboard
+
+### GET `/api/v1/employee/dashboard?date=2026-04-26`
+
+Aggregated home-screen payload.
 
 #### Response Body
 
@@ -283,11 +292,11 @@ Employee Details for Dashboard
   },
   "shift": {
     "status": "clocked_in",
-    "scheduledHours": 8.00,
+    "scheduledHours": 8,
     "workedHours": 7.72,
     "remainingHours": 0.28,
-    "clockInTime": "2026-04-26T09:02:00+05:30",
-    "expectedClockOut": "2026-04-26T17:00:00+05:30"
+    "clockInTime": "2026-04-26T09:02:00-04:00",
+    "expectedClockOut": "2026-04-26T17:00:00-04:00"
   },
   "weeklySummary": {
     "totalHours": 39.72,
@@ -301,7 +310,7 @@ Employee Details for Dashboard
       "type": "presence_alert_sent_to_manager",
       "message": "You have been outside the work radius for more than 1 hour today.",
       "severity": "warning",
-      "createdAt": "2026-04-26T13:48:00+05:30"
+      "createdAt": "2026-04-26T13:48:00-04:00"
     }
   ],
   "upcomingShifts": [
@@ -311,60 +320,87 @@ Employee Details for Dashboard
       "startTime": "09:00",
       "endTime": "17:00",
       "location": "Warehouse 4, Northern Sector",
+      "role": "Floor Supervisor",
       "assignedBy": "Sarah Jenkins"
     }
   ]
 }
 ```
-## Employee Document Endpoints
 
-### GET `/api/v1/employees/{employeeId}/documents`
+---
 
-Lists all uploaded documents for an employee.
+## Self-Service Profile
+
+### GET `/api/v1/employee/me`
+
+Logged-in employee profile.
 
 #### Response Body
 
 ```json
 {
-  "documents": [
-    {
-      "id": "doc_4421",
-      "documentType": "PAN_CARD",
-      "fileName": "pan.pdf",
-      "uploadedAt": "2026-03-12T10:14:00+05:30",
-      "fileSizeBytes": 144211
-    }
+  "id": 101,
+  "employeeId": "EMP1001",
+  "name": "Priya Sharma",
+  "email": "priya@zexovo.com",
+  "phone": "+19045551234",
+  "designation": "Floor Supervisor",
+  "department": "Operations",
+  "manager": {
+    "id": 87,
+    "name": "Sarah Jenkins"
+  },
+  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png",
+  "biometricEnabled": true,
+  "joiningDate": "2024-02-10",
+  "state": "FL",
+  "payType": "hourly"
+}
+```
+
+---
+
+### PATCH `/api/v1/employee/me`
+
+Updates own profile contact info.
+
+#### Request Body
+
+```json
+{
+  "phone": "+19045559999",
+  "address": "123 Main St, Orlando, FL 32801"
+}
+```
+
+#### Response Body
+
+```json
+{
+  "success": true,
+  "updatedFields": [
+    "phone",
+    "address"
   ]
 }
 ```
 
 ---
 
-### GET `/api/v1/employees/{employeeId}/documents/{documentId}/download`
+### POST `/api/v1/employee/me/avatar`
 
-Returns a short-lived signed URL to download a document.
+Uploads profile photo.
 
-#### Response Body
+#### Request Body (multipart/form-data)
 
-```json
-{
-  "id": "doc_4421",
-  "url": "https://files.zexovo.com/signed/doc_4421?token=...",
-  "expiresAt": "2026-04-26T11:14:00+05:30"
-}
-```
-
----
-
-### DELETE `/api/v1/employees/{employeeId}/documents/{documentId}`
-
-Deletes an uploaded employee document.
+| Field | Type | Required | Description          |
+| ----- | ---- | -------- | -------------------- |
+| file  | file | Yes      | JPEG / PNG, max 5 MB |
 
 #### Response Body
 
 ```json
 {
-  "id": "doc_4421",
-  "deleted": true
+  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
 }
 ```
