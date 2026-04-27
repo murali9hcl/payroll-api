@@ -77,7 +77,7 @@ Aggregated home screen — pay-period totals, today's status, pending approvals,
   ]
 }
 ````
-````md id="m7q4xp"
+
 # Manager — Team
 
 ---
