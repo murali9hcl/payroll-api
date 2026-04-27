@@ -316,4 +316,55 @@ Employee Details for Dashboard
   ]
 }
 ```
+## Employee Document Endpoints
 
+### GET `/api/v1/employees/{employeeId}/documents`
+
+Lists all uploaded documents for an employee.
+
+#### Response Body
+
+```json
+{
+  "documents": [
+    {
+      "id": "doc_4421",
+      "documentType": "PAN_CARD",
+      "fileName": "pan.pdf",
+      "uploadedAt": "2026-03-12T10:14:00+05:30",
+      "fileSizeBytes": 144211
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/v1/employees/{employeeId}/documents/{documentId}/download`
+
+Returns a short-lived signed URL to download a document.
+
+#### Response Body
+
+```json
+{
+  "id": "doc_4421",
+  "url": "https://files.zexovo.com/signed/doc_4421?token=...",
+  "expiresAt": "2026-04-26T11:14:00+05:30"
+}
+```
+
+---
+
+### DELETE `/api/v1/employees/{employeeId}/documents/{documentId}`
+
+Deletes an uploaded employee document.
+
+#### Response Body
+
+```json
+{
+  "id": "doc_4421",
+  "deleted": true
+}
+```
