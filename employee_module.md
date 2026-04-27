@@ -2,6 +2,87 @@
 
 ## Endpoints
 
+## Employee Self-Service
+
+### GET `/api/v1/employee/me`
+
+Logged-in employee's own profile. Different from `GET /api/v1/employee/dashboard`, which returns the daily aggregate.
+
+#### Response Body
+
+```json
+{
+  "id": 101,
+  "name": "Priya Sharma",
+  "email": "priya@zexovo.com",
+  "role": "Warehouse Associate",
+  "department": "Operations",
+  "manager": {
+    "id": 87,
+    "name": "Sarah Jenkins"
+  },
+  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
+}
+```
+
+---
+
+### PATCH `/api/v1/employee/me`
+
+Self-update of contact info such as phone, address, and emergency contact.
+
+#### Request Body
+
+```json
+{
+  "phone": "9999999999",
+  "address": "Flat 4B, Banjara Hills, Hyderabad",
+  "emergencyContact": {
+    "name": "Anita Sharma",
+    "relation": "Spouse",
+    "phone": "9888887777"
+  }
+}
+```
+
+#### Response Body
+
+```json
+{
+  "success": true,
+  "updatedFields": [
+    "phone",
+    "address",
+    "emergencyContact"
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/employee/me/avatar`
+
+Uploads employee profile photo.
+
+#### Content Type
+
+`multipart/form-data`
+
+#### Multipart Fields
+
+| Field | Type | Required | Description              |
+| ----- | ---- | -------- | ------------------------ |
+| file  | file | Yes      | JPEG/PNG image, max 5 MB |
+
+#### Response Body
+
+```json
+{
+  "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
+}
+```
+
+
 ### GET `/api/v1/employees?page=1&size=20&search=rahul&status=ACTIVE&department=ENG`
 
 Employee search API
