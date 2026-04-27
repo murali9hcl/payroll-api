@@ -1,4 +1,3 @@
-````md
 # HR Module
 
 Org-wide HR + payroll administration.
@@ -136,7 +135,7 @@ Org-wide metrics for the HR home screen.
 }
 ```
 
-````md
+
 # HR — Designations
 
 ---
@@ -279,7 +278,7 @@ Bulk-creates employees from a CSV upload.
 }
 ```
 
-````md id="hrxt92"
+
 ## POST /api/v1/hr/employees/{employeeId}/rehire
 
 ### Request Body
@@ -407,7 +406,6 @@ Starts an onboarding workflow for a new hire.
 }
 ```
 
-````md id="hrq7mz"
 ## PATCH /api/v1/hr/onboarding/{id}/tasks/{taskId}
 
 ### Request Body
@@ -562,7 +560,7 @@ Starts an onboarding workflow for a new hire.
 }
 ```
 
-````md id="hr8qkm"
+
 ## POST /api/v1/hr/leave-policies
 
 ### Request Body
@@ -739,7 +737,7 @@ Configured earnings + deductions.
   "code": "BONUS"
 }
 ```
-````md id="hr5tqv"
+
 ## PATCH /api/v1/hr/pay-components/{id}
 
 ### Request Body
@@ -981,7 +979,7 @@ Approves a processed run.
   "approvedAt": "2026-04-29T18:00:00-04:00"
 }
 ```
-````md
+
 ## POST /api/v1/hr/payroll/runs/{id}/lock
 
 Locks the payroll period. No more timesheet edits are accepted after lock.  
@@ -1051,7 +1049,7 @@ Locked or paid runs cannot be cancelled.
   "status": "cancelled"
 }
 ```
-````md
+
 ## GET /api/v1/hr/payroll/runs/{id}/ach-file
 
 Re-fetches the ACH file in NACHA format.
@@ -1117,7 +1115,7 @@ Marks checks as printed and assigns sequential check numbers.
   "lastCheckNumber": 1311
 }
 ```
-````md id="taxcfg01"
+
 # HR — Tax Configuration (Florida / Federal)
 
 ## GET /api/v1/hr/tax/slabs
@@ -1201,7 +1199,7 @@ Replaces tax slab configuration for a given year and filing status.
 }
 ```
 
-````md id="hrdocs02"
+
 ## POST /api/v1/hr/tax/employees/{employeeId}/declarations
 
 Stores the employee's W-4 tax declaration.
@@ -1263,7 +1261,7 @@ ZIP file must contain PDFs named `<employeeId>.pdf`.
   ]
 }
 ```
-````md id="hrcomp03"
+
 # HR — Compliance Documents & E-Signature
 
 ## GET /api/v1/hr/compliance-documents
@@ -1360,7 +1358,7 @@ Returns full audit trail for a signature request.
   ]
 }
 ```
-````md id="hrrpt04"
+
 # HR — Reports
 
 ## GET /api/v1/hr/reports/attendance
@@ -1474,7 +1472,7 @@ Returns FLSA / overtime compliance report.
   ]
 }
 ```
-````md id="hrrpt05"
+
 ## GET /api/v1/hr/reports/headcount
 
 Returns headcount trend and attrition metrics for a month range.
@@ -1554,7 +1552,7 @@ Returns export job status and download link when ready.
 }
 ```
 
-````md id="hrann06"
+
 # HR — Announcements
 
 ## GET /api/v1/hr/announcements
