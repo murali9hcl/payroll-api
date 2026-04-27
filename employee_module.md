@@ -407,3 +407,404 @@ Uploads profile photo.
   "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
 }
 ```
+
+
+# Employee Profile — Tax Info & Bank Account APIs
+
+Florida hourly/daily wage context. Currency values in cents (USD) unless otherwise stated.
+
+---
+
+## Tax Information
+
+### GET `/api/v1/employee/me/tax-info`
+
+Tax information shown on the Profile screen (filing status, SSN last 4, exemptions, W-4 status).
+
+#### Response Body
+
+```json
+{
+  "filingStatus": "single",
+  "ssnLast4": "4421",
+  "exemptions": 1,
+  "w4OnFile": true,
+  "w4UpdatedAt": "2025-12-15"
+}
+````
+
+#### Field Notes
+
+| Field        | Type    | Description                                                       |
+| ------------ | ------- | ----------------------------------------------------------------- |
+| filingStatus | string  | single / married_jointly / married_separately / head_of_household |
+| ssnLast4     | string  | Last 4 digits of SSN                                              |
+| exemptions   | number  | Number of exemptions                                              |
+| w4OnFile     | boolean | Whether W-4 declaration exists                                    |
+| w4UpdatedAt  | string  | Last updated date                                                 |
+
+---
+
+## Bank Account
+
+### GET `/api/v1/employee/me/bank-account`
+
+Returns employee bank / direct deposit details. Account number is masked.
+
+#### Response Body
+
+```json
+{
+  "method": "direct_deposit",
+  "accountHolderName": "Priya Sharma",
+  "routingNumber": "021000021",
+  "accountNumberLast4": "7890",
+  "accountType": "checking"
+}
+```
+
+#### Field Notes
+
+| Field              | Type   | Description            |
+| ------------------ | ------ | ---------------------- |
+| method             | string | direct_deposit / check |
+| accountHolderName  | string | Name on bank account   |
+| routingNumber      | string | Bank routing number    |
+| accountNumberLast4 | string | Masked account number  |
+| accountType        | string | checking / savings     |
+
+---
+
+### PATCH `/api/v1/employee/me/bank-account`
+
+Updates employee bank details.
+
+#### Request Body
+
+```json
+{
+  "accountHolderName": "Priya Sharma",
+  "routingNumber": "021000021",
+  "accountNumber": "9876543210",
+  "accountType": "savings"
+}
+```
+
+#### Response Body
+
+```json
+{
+  "success": true,
+  "accountNumberLast4": "3210"
+}
+```
+
+
+# Employee Profile — Contract, Preferences, Biometric & Emergency Contacts APIs
+
+Florida hourly/daily wage context. Timestamps in `-04:00 (US/Eastern)`.
+
+---
+
+## Employment Contract
+
+### GET `/api/v1/employee/me/contract`
+
+Returns a signed URL to the employment contract PDF.
+
+#### Response Body
+
+```json
+{
+  "documentId": "doc_contract_101",
+  "url": "https://files.zexovo.com/signed/contract_EMP1001?token=...",
+  "expiresAt": "2026-04-26T11:14:00-04:00"
+}
+````
+
+#### Field Notes
+
+| Field      | Type   | Description                   |
+| ---------- | ------ | ----------------------------- |
+| documentId | string | Internal contract document ID |
+| url        | string | Signed download URL           |
+| expiresAt  | string | URL expiry timestamp          |
+
+---
+
+## Notification Preferences
+
+### GET `/api/v1/employee/me/preferences/notifications`
+
+Returns notification channel and topic preferences.
+
+#### Response Body
+
+```json
+{
+  "channels": {
+    "push": {
+      "enabled": true,
+      "topics": ["payslip","timesheet","schedule","overtime","announcement"]
+    },
+    "email": {
+      "enabled": true,
+      "topics": ["payslip","announcement"]
+    },
+    "whatsapp": {
+      "enabled": false,
+      "topics": []
+    }
+  }
+}
+```
+
+#### Supported Topics
+
+* payslip
+* timesheet
+* schedule
+* overtime
+* announcement
+
+---
+
+### PATCH `/api/v1/employee/me/preferences/notifications`
+
+Partial update of notification preferences.
+
+#### Request Body
+
+```json
+{
+  "channels": {
+    "whatsapp": {
+      "enabled": true,
+      "topics": ["payslip"]
+    }
+  }
+}
+```
+
+#### Response Body
+
+```json
+{
+  "success": true
+}
+```
+
+---
+
+## Biometric Login
+
+### PATCH `/api/v1/employee/me/biometric`
+
+Enables / disables biometric login.
+
+#### Request Body
+
+```json
+{
+  "enabled": true
+}
+```
+
+#### Response Body
+
+```json
+{
+  "enabled": true
+}
+```
+
+#### Field Notes
+
+| Field   | Type    | Description                   |
+| ------- | ------- | ----------------------------- |
+| enabled | boolean | Current biometric login state |
+
+---
+
+## Emergency Contacts
+
+### GET `/api/v1/employee/me/emergency-contacts`
+
+Returns all emergency contacts.
+
+#### Response Body
+
+```json
+{
+  "contacts": [
+    {
+      "id": "ec_1",
+      "name": "Anita Sharma",
+      "relation": "Spouse",
+      "phone": "+19045559999",
+      "primary": true
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/employee/me/emergency-contacts`
+
+Creates a new emergency contact.
+
+#### Request Body
+
+```json
+{
+  "name": "Ravi Sharma",
+  "relation": "Father",
+  "phone": "+19045557777",
+  "primary": false
+}
+```
+
+#### Response Body
+
+```json
+{
+  "id": "ec_2",
+  "name": "Ravi Sharma"
+}
+```
+
+---
+
+### PATCH `/api/v1/employee/me/emergency-contacts/{id}`
+
+Updates an emergency contact.
+
+#### Request Body
+
+```json
+{
+  "phone": "+19045557788"
+}
+```
+
+#### Response Body
+
+```json
+{
+  "id": "ec_2",
+  "updated": true
+}
+```
+
+---
+
+### DELETE `/api/v1/employee/me/emergency-contacts/{id}`
+
+Deletes an emergency contact.
+
+#### Response Body
+
+```json
+{
+  "id": "ec_2",
+  "deleted": true
+}
+```
+
+---
+
+## Emergency Contact Fields
+
+| Field    | Type    | Description              |
+| -------- | ------- | ------------------------ |
+| id       | string  | Contact ID               |
+| name     | string  | Full name                |
+| relation | string  | Relationship to employee |
+| phone    | string  | Emergency phone number   |
+| primary  | boolean | Primary contact flag     |
+
+---
+````md
+# Employee Signature Requests APIs
+
+Compliance documents awaiting employee acknowledgment or signature  
+(FLSA policy, geofence consent, handbook, NDA, etc.)
+
+Timestamps use `-04:00 (US/Eastern)`.
+
+---
+
+## GET `/api/v1/employee/me/signature-requests`
+
+Returns all compliance documents awaiting the employee's signature.
+
+### Response Body
+
+```json
+{
+  "requests": [
+    {
+      "id": "sig_1",
+      "documentId": "comp_flsa_2026",
+      "documentName": "FLSA Overtime Policy 2026",
+      "documentType": "flsa_policy",
+      "dueDate": "2026-05-15",
+      "status": "pending"
+    }
+  ]
+}
+````
+
+### Field Notes
+
+| Field        | Type   | Description                                                       |
+| ------------ | ------ | ----------------------------------------------------------------- |
+| id           | string | Signature request ID                                              |
+| documentId   | string | Compliance document ID                                            |
+| documentName | string | Human-readable document title                                     |
+| documentType | string | flsa_policy / geofence_consent / handbook / nda / safety_training |
+| dueDate      | string | Signature deadline                                                |
+| status       | string | pending / signed / expired                                        |
+
+---
+
+## POST `/api/v1/employee/me/signature-requests/{id}/sign`
+
+Signs a compliance document using the in-app signature pad.
+
+### Request Body
+
+```json
+{
+  "signatureImageBase64": "...",
+  "consentAccepted": true,
+  "signedAt": "2026-04-27T10:14:00-04:00",
+  "deviceFingerprint": "ios-9F2A-...-B81C"
+}
+```
+
+### Request Field Notes
+
+| Field                | Type    | Required | Description                          |
+| -------------------- | ------- | -------- | ------------------------------------ |
+| signatureImageBase64 | string  | Yes      | Base64 encoded signature image       |
+| consentAccepted      | boolean | Yes      | Must be true before signing          |
+| signedAt             | string  | Yes      | Signature timestamp                  |
+| deviceFingerprint    | string  | Yes      | Device fingerprint for audit logging |
+
+---
+
+### Response Body
+
+```json
+{
+  "id": "sig_1",
+  "status": "signed",
+  "auditTrailId": "audit_sig_1",
+  "signedDocumentUrl": "https://files.zexovo.com/signed/comp_flsa_2026_signed_EMP1001?token=..."
+}
+```
+
+
+
