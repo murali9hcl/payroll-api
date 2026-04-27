@@ -292,4 +292,43 @@ Lists the employee's overtime requests with statuses.
   ]
 }
 ```
+## Device Endpoints
+
+### POST `/api/v1/devices/register`
+
+Registers a mobile device for push notifications such as leave approvals, payslip availability, and timesheet updates.
+
+#### Request Body
+
+```json id="y3n8qp"
+{
+  "deviceId": "ios-9F2A-...-B81C",
+  "platform": "ios",
+  "pushToken": "fcm_or_apns_token",
+  "appVersion": "1.4.2"
+}
+```
+
+#### Response Body
+
+```json id="p7v4ke"
+{
+  "success": true,
+  "deviceId": "ios-9F2A-...-B81C"
+}
+```
+
+---
+
+### DELETE `/api/v1/devices/{deviceId}`
+
+Unregisters a device and disables future push notifications for it.
+
+#### Response Body
+
+```json id="h2x6rm"
+{
+  "success": true
+}
+```
 
