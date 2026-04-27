@@ -3,6 +3,94 @@
 
 ## Endpoints
 
+### GET `/api/v1/time-off/balances`
+
+Standalone leave balances endpoint. Useful for balance cards in UI.
+
+#### Response Body
+
+```json
+{
+  "year": 2026,
+  "balances": [
+    {
+      "type": "vacation",
+      "totalDays": 18,
+      "usedDays": 6,
+      "remainingDays": 12
+    },
+    {
+      "type": "sick",
+      "totalDays": 10,
+      "usedDays": 4,
+      "remainingDays": 6
+    },
+    {
+      "type": "personal",
+      "totalDays": 4,
+      "usedDays": 2,
+      "remainingDays": 2
+    }
+  ]
+}
+````
+
+### GET `/api/v1/time-off/types`
+
+Returns the leave types allowed for this employee. Drives the dropdown in the request form.
+
+#### Response Body
+
+```json id="x4g2or"
+{
+  "types": [
+    {
+      "id": "vacation",
+      "label": "Vacation",
+      "halfDayAllowed": true
+    },
+    {
+      "id": "sick",
+      "label": "Sick Leave",
+      "halfDayAllowed": true
+    },
+    {
+      "id": "personal",
+      "label": "Personal Day",
+      "halfDayAllowed": false
+    },
+    {
+      "id": "bereavement",
+      "label": "Bereavement",
+      "halfDayAllowed": false
+    }
+  ]
+}
+```
+
+### PATCH `/api/v1/time-off/requests/to_5512`
+
+Edits a pending request before manager approval.
+
+#### Request Body
+
+```json id="l26r5z"
+{
+  "startDate": "2026-05-11",
+  "endDate": "2026-05-13",
+  "reason": "Family event (dates moved)"
+}
+```
+
+#### Response Body
+
+```json id="q3u6zt"
+{
+  "id": "to_5512",
+  "status": "pending",
+  "updatedAt": "2026-04-26T12:14:00+05:30"
+}
+```
 
 ### POST /api/v1/time-off/requests
 
@@ -183,8 +271,6 @@ Submits a request to extend the current shift into overtime.
 }
 ```
 
----
-
 ### GET `/api/v1/overtime/requests?status=all`
 
 Lists the employee's overtime requests with statuses.
@@ -206,3 +292,4 @@ Lists the employee's overtime requests with statuses.
   ]
 }
 ```
+
