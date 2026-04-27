@@ -1,4 +1,3 @@
-````md
 # Attendance Module
 
 Time tracking for hourly and daily wage employees.
