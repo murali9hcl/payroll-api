@@ -402,4 +402,206 @@ Returns the team schedule grid for a date range.
   ]
 }
 ```
+## Manager Approval Actions
 
+### POST `/api/v1/manager/approvals/overtime/{requestId}/approve`
+
+Approves an overtime request.
+
+#### Request Body
+
+```json id="2v1t3a"
+{
+  "comment": "OK — capped at 1.5h"
+}
+```
+
+#### Response Body
+
+```json id="91x4cm"
+{
+  "id": "ot_221",
+  "status": "approved"
+}
+```
+
+---
+
+### POST `/api/v1/manager/approvals/overtime/{requestId}/reject`
+
+Rejects an overtime request.
+
+#### Request Body
+
+```json id="83p7fa"
+{
+  "comment": "Already at FLSA threshold"
+}
+```
+
+#### Response Body
+
+```json id="g4d71x"
+{
+  "id": "ot_221",
+  "status": "rejected"
+}
+```
+
+---
+
+### GET `/api/v1/manager/approvals/clock-in-requests`
+
+Lists pending clock-in requests.
+
+#### Response Body
+
+```json id="b6r2ke"
+{
+  "requests": [
+    {
+      "id": "req_4421",
+      "employeeId": "EMP1001",
+      "employeeName": "Priya Sharma",
+      "date": "2026-04-26",
+      "reason": "Asked to cover shift",
+      "expectedHours": 6,
+      "submittedAt": "2026-04-26T08:55:00+05:30",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/manager/approvals/clock-in-requests/{requestId}/approve`
+
+Approves a clock-in request.
+
+#### Response Body
+
+```json id="s8q5yu"
+{
+  "id": "req_4421",
+  "status": "approved"
+}
+```
+
+---
+
+### POST `/api/v1/manager/approvals/clock-in-requests/{requestId}/reject`
+
+Rejects a clock-in request.
+
+#### Request Body
+
+```json id="x5n8je"
+{
+  "comment": "Already covered"
+}
+```
+
+#### Response Body
+
+```json id="w3k1zc"
+{
+  "id": "req_4421",
+  "status": "rejected"
+}
+```
+
+---
+
+### GET `/api/v1/manager/approvals/timesheets/{timesheetId}`
+
+Returns detailed timesheet breakdown.
+
+#### Response Body
+
+```json id="l6f0pt"
+{
+  "id": "ts_771",
+  "employeeId": "EMP1001",
+  "weekStart": "2026-04-20",
+  "weekEnd": "2026-04-26",
+  "days": [
+    {
+      "date": "2026-04-20",
+      "scheduled": 8,
+      "worked": 8.02,
+      "flagged": false
+    }
+  ],
+  "totals": {
+    "scheduled": 40,
+    "worked": 39.72,
+    "overtime": 0
+  }
+}
+```
+
+---
+
+### POST `/api/v1/manager/approvals/timesheets/{timesheetId}/approve`
+
+Approves a timesheet.
+
+#### Response Body
+
+```json id="u2m9va"
+{
+  "id": "ts_771",
+  "status": "approved"
+}
+```
+
+---
+
+### POST `/api/v1/manager/approvals/timesheets/{timesheetId}/reject`
+
+Rejects a timesheet.
+
+#### Request Body
+
+```json id="r1h8kd"
+{
+  "comment": "Day 4 hours look off — please re-submit"
+}
+```
+
+#### Response Body
+
+```json id="c7y4ne"
+{
+  "id": "ts_771",
+  "status": "rejected"
+}
+```
+
+---
+
+### POST `/api/v1/manager/approvals/timesheets/bulk-approve`
+
+Approves multiple timesheets in one request.
+
+#### Request Body
+
+```json id="n9p6lw"
+{
+  "timesheetIds": [
+    "ts_771",
+    "ts_772",
+    "ts_773"
+  ]
+}
+```
+
+#### Response Body
+
+```json id="d5t2qa"
+{
+  "approved": 3,
+  "failed": 0
+}
+```
