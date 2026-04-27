@@ -1,188 +1,5 @@
 ## HR Endpoints
 
-### GET `/api/v1/manager/dashboard`
-
-Manager dashboard summary API.
-
-#### Response Body
-
-```json
-{
-  "greeting": "Good Morning",
-  "manager": {
-    "id": 87,
-    "name": "Sarah Jenkins"
-  },
-  "teamSize": 14,
-  "today": {
-    "clockedIn": 11,
-    "onBreak": 2,
-    "absent": 1,
-    "onLeave": 0,
-    "flagged": 1
-  },
-  "pendingApprovals": {
-    "timeOff": 3,
-    "overtime": 1,
-    "clockInRequests": 2,
-    "timesheets": 4,
-    "total": 10
-  },
-  "recentAlerts": [
-    {
-      "id": "alrt_882",
-      "employeeId": "EMP1001",
-      "employeeName": "Priya Sharma",
-      "type": "off_radius",
-      "message": "Outside work radius for more than 1 hour",
-      "createdAt": "2026-04-26T13:48:00+05:30"
-    }
-  ]
-}
-````
-
----
-
-### GET `/api/v1/manager/team?page=1&size=20&status=active&search=priya`
-
-Manager team members listing API.
-
-#### Response Body
-
-```json
-{
-  "data": [
-    {
-      "employeeId": "EMP1001",
-      "name": "Priya Sharma",
-      "designation": "Warehouse Associate",
-      "department": "Operations",
-      "status": "ACTIVE",
-      "todayStatus": "clocked_in",
-      "avatarUrl": "https://cdn.zexovo.com/avatars/101.png"
-    }
-  ],
-  "page": 1,
-  "size": 20,
-  "total": 14
-}
-```
-
----
-
-### GET `/api/v1/manager/team/EMP1001`
-
-Manager team employee profile API.
-
-#### Response Body
-
-```json
-{
-  "employeeId": "EMP1001",
-  "name": "Priya Sharma",
-  "designation": "Warehouse Associate",
-  "department": "Operations",
-  "status": "ACTIVE",
-  "joiningDate": "2024-02-10",
-  "todayStatus": "clocked_in",
-  "currentShift": {
-    "id": "shf_2031",
-    "startTime": "09:00",
-    "endTime": "17:00"
-  },
-  "weekHours": 39.72,
-  "monthlyAttendance": 96.4
-}
-```
-
----
-
-### GET `/api/v1/manager/team/attendance/today`
-
-Live team attendance snapshot API.
-
-#### Response Body
-
-```json
-{
-  "date": "2026-04-26",
-  "summary": {
-    "total": 14,
-    "clockedIn": 11,
-    "onBreak": 2,
-    "absent": 1,
-    "onLeave": 0,
-    "flagged": 1
-  },
-  "members": [
-    {
-      "employeeId": "EMP1001",
-      "name": "Priya Sharma",
-      "status": "clocked_in",
-      "clockInTime": "2026-04-26T09:02:00+05:30",
-      "elapsed": "7h 43m",
-      "withinRadius": true,
-      "flagged": false
-    }
-  ]
-}
-```
-
----
-
-### GET `/api/v1/manager/alerts?status=open&from=2026-04-01&to=2026-04-30`
-
-Manager presence alerts listing API.
-
-#### Response Body
-
-```json
-{
-  "alerts": [
-    {
-      "id": "alrt_882",
-      "employeeId": "EMP1001",
-      "employeeName": "Priya Sharma",
-      "type": "off_radius",
-      "severity": "warning",
-      "message": "Outside work radius for more than 1 hour",
-      "occurredAt": "2026-04-26T13:48:00+05:30",
-      "status": "open"
-    }
-  ]
-}
-```
-
----
-
-### GET `/api/v1/manager/approvals/time-off?status=pending`
-
-Pending leave approval requests API.
-
-#### Response Body
-
-```json
-{
-  "requests": [
-    {
-      "id": "to_5512",
-      "employeeId": "EMP1001",
-      "employeeName": "Priya Sharma",
-      "type": "vacation",
-      "startDate": "2026-05-10",
-      "endDate": "2026-05-12",
-      "days": 3,
-      "reason": "Family event",
-      "status": "pending",
-      "submittedAt": "2026-04-26T10:14:00+05:30",
-      "balanceAfter": 9
-    }
-  ]
-}
-```
-
----
-
 ### GET `/api/v1/hr/dashboard`
 
 HR dashboard summary API.
@@ -253,9 +70,6 @@ Payroll runs listing API.
   ]
 }
 ```
-
----
-
 ### GET `/api/v1/hr/reports/attendance?from=2026-04-01&to=2026-04-30`
 
 HR attendance analytics report API.
@@ -281,9 +95,6 @@ HR attendance analytics report API.
   ]
 }
 ```
-
----
-
 ### GET `/api/v1/hr/audit-logs?page=1&size=20`
 
 HR audit logs API.
@@ -308,3 +119,558 @@ HR audit logs API.
   "total": 1421
 }
 ```
+
+## HR Module (High Priority Additions)
+
+### POST `/api/v1/hr/departments`
+
+Creates a new department.
+
+#### Request Body
+
+```json id="hr001"
+{
+  "name": "Operations",
+  "managerId": "EMP1500",
+  "code": "OPS"
+}
+```
+
+#### Response Body
+
+```json id="hr002"
+{
+  "id": "D200",
+  "name": "Operations"
+}
+```
+
+---
+
+### PATCH `/api/v1/hr/departments/{id}`
+
+Updates a department.
+
+#### Request Body
+
+```json id="hr003"
+{
+  "managerId": "EMP1600"
+}
+```
+
+#### Response Body
+
+```json id="hr004"
+{
+  "id": "D200",
+  "updated": true
+}
+```
+
+---
+
+### DELETE `/api/v1/hr/departments/{id}`
+
+Deletes a department.
+
+#### Response Body
+
+```json id="hr005"
+{
+  "id": "D200",
+  "deleted": true
+}
+```
+
+---
+
+### GET `/api/v1/hr/designations`
+
+Returns all designations.
+
+#### Response Body
+
+```json id="hr006"
+{
+  "designations": [
+    {
+      "id": "DES200",
+      "title": "Software Engineer",
+      "departmentId": "D100",
+      "level": "L3"
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/hr/designations`
+
+Creates a designation.
+
+#### Request Body
+
+```json id="hr007"
+{
+  "title": "Senior Software Engineer",
+  "departmentId": "D100",
+  "level": "L4"
+}
+```
+
+#### Response Body
+
+```json id="hr008"
+{
+  "id": "DES210",
+  "title": "Senior Software Engineer"
+}
+```
+
+---
+
+### PATCH `/api/v1/hr/designations/{id}`
+
+Updates a designation.
+
+#### Request Body
+
+```json id="hr009"
+{
+  "level": "L5"
+}
+```
+
+#### Response Body
+
+```json id="hr010"
+{
+  "id": "DES210",
+  "updated": true
+}
+```
+
+---
+
+### DELETE `/api/v1/hr/designations/{id}`
+
+Deletes a designation.
+
+#### Response Body
+
+```json id="hr011"
+{
+  "id": "DES210",
+  "deleted": true
+}
+```
+
+---
+
+### POST `/api/v1/hr/employees/bulk-import`
+
+Imports employees from CSV.
+
+#### Content Type
+
+`multipart/form-data`
+
+#### Multipart Fields
+
+| Field  | Type   | Required | Description                    |
+| ------ | ------ | -------- | ------------------------------ |
+| file   | file   | Yes      | CSV file with required columns |
+| dryRun | string | No       | `"true"` validates only        |
+
+#### Response Body
+
+```json id="hr012"
+{
+  "totalRows": 50,
+  "created": 47,
+  "skipped": 2,
+  "failed": 1,
+  "errors": [
+    {
+      "row": 14,
+      "code": "DUPLICATE_EMAIL",
+      "message": "rahul@company.com already exists"
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/hr/employees/{employeeId}/terminate`
+
+Terminates an employee.
+
+#### Request Body
+
+```json id="hr013"
+{
+  "lastWorkingDate": "2026-05-30",
+  "reason": "Resignation",
+  "noticePeriodWaived": false,
+  "settleFinalPay": true
+}
+```
+
+#### Response Body
+
+```json id="hr014"
+{
+  "employeeId": "EMP1001",
+  "status": "TERMINATED",
+  "finalSettlementId": "fs_4421"
+}
+```
+
+---
+
+### POST `/api/v1/hr/employees/{employeeId}/rehire`
+
+Rehires an employee.
+
+#### Request Body
+
+```json id="hr015"
+{
+  "rejoiningDate": "2026-07-01",
+  "designationId": "DES200"
+}
+```
+
+#### Response Body
+
+```json id="hr016"
+{
+  "employeeId": "EMP1001",
+  "status": "ACTIVE"
+}
+```
+
+---
+
+### POST `/api/v1/hr/employees/{employeeId}/transfer`
+
+Transfers an employee.
+
+#### Request Body
+
+```json id="hr017"
+{
+  "departmentId": "D200",
+  "managerId": "EMP1500",
+  "effectiveDate": "2026-05-01"
+}
+```
+
+#### Response Body
+
+```json id="hr018"
+{
+  "employeeId": "EMP1001",
+  "transferId": "trf_99"
+}
+```
+
+---
+
+### POST `/api/v1/hr/onboarding`
+
+Starts onboarding workflow.
+
+#### Request Body
+
+```json id="hr019"
+{
+  "employeeId": "EMP1001",
+  "templateId": "onb_default",
+  "startDate": "2026-04-22"
+}
+```
+
+#### Response Body
+
+```json id="hr020"
+{
+  "id": "onb_run_1",
+  "employeeId": "EMP1001",
+  "tasks": [
+    {
+      "id": "tsk_1",
+      "label": "Submit ID proof",
+      "status": "pending"
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/v1/hr/onboarding/{id}`
+
+Returns onboarding progress.
+
+#### Response Body
+
+```json id="hr021"
+{
+  "id": "onb_run_1",
+  "employeeId": "EMP1001",
+  "progress": 33,
+  "tasks": [
+    {
+      "id": "tsk_1",
+      "label": "Submit ID proof",
+      "status": "completed",
+      "completedAt": "2026-04-22T10:00:00+05:30"
+    }
+  ]
+}
+```
+
+---
+
+### PATCH `/api/v1/hr/onboarding/{id}/tasks/{taskId}`
+
+Updates onboarding task status.
+
+#### Request Body
+
+```json id="hr022"
+{
+  "status": "completed"
+}
+```
+
+#### Response Body
+
+```json id="hr023"
+{
+  "id": "tsk_2",
+  "status": "completed"
+}
+```
+
+---
+
+### GET `/api/v1/hr/holidays`
+
+Returns holiday list.
+
+#### Query Parameters
+
+`year` (optional)
+
+#### Response Body
+
+```json id="hr024"
+{
+  "year": 2026,
+  "holidays": [
+    {
+      "id": "hol_1",
+      "date": "2026-01-26",
+      "name": "Republic Day",
+      "type": "national"
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/hr/holidays`
+
+Creates a holiday.
+
+#### Request Body
+
+```json id="hr025"
+{
+  "date": "2026-08-15",
+  "name": "Independence Day",
+  "type": "national"
+}
+```
+
+#### Response Body
+
+```json id="hr026"
+{
+  "id": "hol_2",
+  "name": "Independence Day"
+}
+```
+
+---
+
+### PATCH `/api/v1/hr/holidays/{id}`
+
+Updates holiday.
+
+#### Request Body
+
+```json id="hr027"
+{
+  "name": "Independence Day (observed)"
+}
+```
+
+#### Response Body
+
+```json id="hr028"
+{
+  "id": "hol_2",
+  "updated": true
+}
+```
+
+---
+
+### DELETE `/api/v1/hr/holidays/{id}`
+
+Deletes holiday.
+
+#### Response Body
+
+```json id="hr029"
+{
+  "id": "hol_2",
+  "deleted": true
+}
+```
+
+---
+
+### GET `/api/v1/hr/payroll/runs/{id}`
+
+Returns payroll run details.
+
+#### Response Body
+
+```json id="hr030"
+{
+  "id": "pr_2026_04",
+  "period": "2026-04",
+  "status": "awaiting_approval",
+  "summary": {
+    "employees": 312,
+    "grossTotal": 2652000000,
+    "deductionsTotal": 555360000,
+    "netTotal": 2096640000,
+    "taxTotal": 367920000
+  },
+  "lines": [
+    {
+      "employeeId": "EMP1001",
+      "name": "Priya Sharma",
+      "gross": 8500000,
+      "deductions": 1780000,
+      "net": 6720000
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/hr/payroll/runs/{id}/approve`
+
+Approves payroll run.
+
+#### Response Body
+
+```json id="hr031"
+{
+  "id": "pr_2026_04",
+  "status": "approved",
+  "approvedAt": "2026-04-29T18:00:00+05:30"
+}
+```
+
+---
+
+### POST `/api/v1/hr/payroll/runs/{id}/publish`
+
+Publishes payroll and payslips.
+
+#### Response Body
+
+```json id="hr032"
+{
+  "id": "pr_2026_04",
+  "status": "paid",
+  "payslipsPublished": 312,
+  "bankFileUrl": "https://files.zexovo.com/signed/bank_pr_2026_04?token=..."
+}
+```
+
+---
+
+### GET `/api/v1/hr/announcements`
+
+Returns announcements.
+
+#### Response Body
+
+```json id="hr033"
+{
+  "announcements": [
+    {
+      "id": "ann_1",
+      "title": "Q1 Town Hall",
+      "body": "Join us on April 30 at 4 PM IST.",
+      "audience": "all",
+      "publishedAt": "2026-04-26T09:00:00+05:30"
+    }
+  ]
+}
+```
+
+---
+
+### POST `/api/v1/hr/announcements`
+
+Creates announcement.
+
+#### Request Body
+
+```json id="hr034"
+{
+  "title": "Office closure on Friday",
+  "body": "All offices closed for maintenance.",
+  "audience": "department:D100",
+  "publishAt": "2026-04-29T09:00:00+05:30"
+}
+```
+
+#### Response Body
+
+```json id="hr035"
+{
+  "id": "ann_2",
+  "status": "scheduled"
+}
+```
+
+---
+
+### DELETE `/api/v1/hr/announcements/{id}`
+
+Deletes announcement.
+
+#### Response Body
+
+```json id="hr036"
+{
+  "id": "ann_2",
+  "deleted": true
+}
+```
+
