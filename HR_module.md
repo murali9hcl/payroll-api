@@ -120,8 +120,6 @@ HR audit logs API.
 }
 ```
 
-## HR Module (High Priority Additions)
-
 ### POST `/api/v1/hr/departments`
 
 Creates a new department.
@@ -673,4 +671,45 @@ Deletes announcement.
   "deleted": true
 }
 ```
+## Tax Documents Endpoints
 
+### GET `/api/v1/tax-documents?year=2025-26`
+
+Lists available tax documents for the employee. Drives the **View Tax Docs** quick action.
+
+#### Query Parameters
+
+* `year` (optional, default = current fiscal year)
+
+#### Response Body
+
+```json
+{
+  "year": "2025-26",
+  "documents": [
+    {
+      "id": "tax_991",
+      "name": "Form 16 — FY 2025-26",
+      "type": "form_16",
+      "issuedOn": "2026-04-15",
+      "fileSizeBytes": 184231
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/v1/tax-documents/{id}/download`
+
+Returns a short-lived signed URL to download a tax document.
+
+#### Response Body
+
+```json
+{
+  "id": "tax_991",
+  "url": "https://files.zexovo.com/signed/tax_991?token=...",
+  "expiresAt": "2026-04-26T11:14:00+05:30"
+}
+```
