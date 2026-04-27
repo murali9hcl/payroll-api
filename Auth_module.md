@@ -122,3 +122,37 @@ Lets a logged-in user change their password.
   "success": true
 }
 ```
+
+## Shared Error Response
+
+### Error Format
+
+Standardised across all modules so the frontend can use a single error handler.
+
+#### Response Body
+
+```json
+{
+  "error": {
+    "code": "GEOFENCE_VIOLATION",
+    "message": "You must be within the assigned location radius to clock in.",
+    "details": {
+      "distanceMeters": 142,
+      "allowedRadiusMeters": 75
+    }
+  }
+}
+```
+
+#### Common Error Codes
+
+* `INVALID_CREDENTIALS`
+* `TOKEN_EXPIRED`
+* `GEOFENCE_VIOLATION`
+* `SHIFT_NOT_STARTED`
+* `ALREADY_CLOCKED_IN`
+* `NOT_CLOCKED_IN`
+* `FLSA_LIMIT_REACHED`
+* `INSUFFICIENT_BALANCE`
+* `EMPLOYEE_NOT_FOUND`
+* `NOT_FOUND`
