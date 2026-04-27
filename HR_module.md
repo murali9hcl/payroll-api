@@ -1,10 +1,32 @@
-## HR Endpoints
+````md
+# HR Module
 
-### GET `/api/v1/hr/dashboard`
+Org-wide HR + payroll administration.
 
-HR dashboard summary API.
+**Payroll Context**
+- Florida hourly/daily wage payroll
+- Currency: USD (cents)
+- Employee deductions:
+  - Federal Income Tax
+  - Social Security (6.2%)
+  - Medicare (1.45%)
+- Employer-paid:
+  - FUTA
+  - FL SUTA
+- Florida has no state income tax
+- Timestamps: `-04:00 (US/Eastern)`
 
-#### Response Body
+---
+
+## Endpoints
+
+---
+
+## GET /api/v1/hr/dashboard
+
+Org-wide metrics for the HR home screen.
+
+### Response Body
 
 ```json
 {
@@ -19,27 +41,37 @@ HR dashboard summary API.
   },
   "openPositions": 14,
   "payrollStatus": {
-    "currentPeriod": "2026-04",
+    "currentPeriod": "2026-04-15_to_2026-04-28",
     "status": "in_progress",
     "scheduledRunDate": "2026-04-30"
-  }
+  },
+  "complianceAlerts": [
+    {
+      "id": "comp_1",
+      "type": "flsa_breach",
+      "message": "2 employees crossed 40 hr threshold without OT approval",
+      "severity": "warning"
+    }
+  ]
 }
-```
+````
 
 ---
 
-### GET `/api/v1/hr/departments`
+# HR — Departments
 
-Department listing API.
+---
 
-#### Response Body
+## GET /api/v1/hr/departments
+
+### Response Body
 
 ```json
 {
   "departments": [
     {
       "id": "D100",
-      "name": "Engineering",
+      "name": "Operations",
       "headcount": 84,
       "managerId": "EMP1000"
     }
@@ -49,84 +81,11 @@ Department listing API.
 
 ---
 
-### GET `/api/v1/hr/payroll/runs?year=2026&status=approved`
+## POST /api/v1/hr/departments
 
-Payroll runs listing API.
-
-#### Response Body
+### Request Body
 
 ```json
-{
-  "runs": [
-    {
-      "id": "pr_2026_04",
-      "period": "2026-04",
-      "status": "approved",
-      "employeesIncluded": 312,
-      "grossTotal": 2652000000,
-      "netTotal": 2096640000,
-      "scheduledPayDate": "2026-04-30"
-    }
-  ]
-}
-```
-### GET `/api/v1/hr/reports/attendance?from=2026-04-01&to=2026-04-30`
-
-HR attendance analytics report API.
-
-#### Response Body
-
-```json
-{
-  "from": "2026-04-01",
-  "to": "2026-04-30",
-  "summary": {
-    "averageAttendance": 95.2,
-    "averageOnSitePercentage": 88.4,
-    "flaggedDays": 14,
-    "absences": 22
-  },
-  "byDepartment": [
-    {
-      "departmentId": "D100",
-      "departmentName": "Engineering",
-      "attendance": 96.1
-    }
-  ]
-}
-```
-### GET `/api/v1/hr/audit-logs?page=1&size=20`
-
-HR audit logs API.
-
-#### Response Body
-
-```json
-{
-  "data": [
-    {
-      "id": "log_8821",
-      "actorId": "EMP_HR_1",
-      "actorName": "Anita Rao",
-      "action": "PAYROLL_RUN_APPROVED",
-      "entityType": "payroll_run",
-      "entityId": "pr_2026_04",
-      "occurredAt": "2026-04-29T18:00:00+05:30"
-    }
-  ],
-  "page": 1,
-  "size": 20,
-  "total": 1421
-}
-```
-
-### POST `/api/v1/hr/departments`
-
-Creates a new department.
-
-#### Request Body
-
-```json id="hr001"
 {
   "name": "Operations",
   "managerId": "EMP1500",
@@ -134,9 +93,9 @@ Creates a new department.
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr002"
+```json
 {
   "id": "D200",
   "name": "Operations"
@@ -145,21 +104,19 @@ Creates a new department.
 
 ---
 
-### PATCH `/api/v1/hr/departments/{id}`
+## PATCH /api/v1/hr/departments/{id}
 
-Updates a department.
+### Request Body
 
-#### Request Body
-
-```json id="hr003"
+```json
 {
   "managerId": "EMP1600"
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr004"
+```json
 {
   "id": "D200",
   "updated": true
@@ -168,82 +125,77 @@ Updates a department.
 
 ---
 
-### DELETE `/api/v1/hr/departments/{id}`
+## DELETE /api/v1/hr/departments/{id}
 
-Deletes a department.
+### Response Body
 
-#### Response Body
-
-```json id="hr005"
+```json
 {
   "id": "D200",
   "deleted": true
 }
 ```
 
+````md
+# HR — Designations
+
 ---
 
-### GET `/api/v1/hr/designations`
+## GET /api/v1/hr/designations
 
-Returns all designations.
+### Response Body
 
-#### Response Body
-
-```json id="hr006"
+```json
 {
   "designations": [
     {
       "id": "DES200",
-      "title": "Software Engineer",
+      "title": "Floor Supervisor",
       "departmentId": "D100",
       "level": "L3"
     }
   ]
 }
-```
+````
 
 ---
 
-### POST `/api/v1/hr/designations`
+## POST /api/v1/hr/designations
 
-Creates a designation.
+### Request Body
 
-#### Request Body
-
-```json id="hr007"
+```json
 {
-  "title": "Senior Software Engineer",
+  "title": "Senior Floor Supervisor",
   "departmentId": "D100",
   "level": "L4"
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr008"
+```json
 {
   "id": "DES210",
-  "title": "Senior Software Engineer"
+  "title": "Senior Floor Supervisor"
 }
 ```
 
 ---
 
-### PATCH `/api/v1/hr/designations/{id}`
+## PATCH /api/v1/hr/designations/{id}
 
-Updates a designation.
+### Request Body
 
-#### Request Body
-
-```json id="hr009"
+```json
 {
   "level": "L5"
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr010"
+```json
 {
   "id": "DES210",
   "updated": true
@@ -252,13 +204,11 @@ Updates a designation.
 
 ---
 
-### DELETE `/api/v1/hr/designations/{id}`
+## DELETE /api/v1/hr/designations/{id}
 
-Deletes a designation.
+### Response Body
 
-#### Response Body
-
-```json id="hr011"
+```json
 {
   "id": "DES210",
   "deleted": true
@@ -267,24 +217,28 @@ Deletes a designation.
 
 ---
 
-### POST `/api/v1/hr/employees/bulk-import`
+# HR — Employee Operations
 
-Imports employees from CSV.
+---
 
-#### Content Type
+## POST /api/v1/hr/employees/bulk-import
+
+Bulk-creates employees from a CSV upload.
+
+### Content Type
 
 `multipart/form-data`
 
-#### Multipart Fields
+### Multipart Fields
 
-| Field  | Type   | Required | Description                    |
-| ------ | ------ | -------- | ------------------------------ |
-| file   | file   | Yes      | CSV file with required columns |
-| dryRun | string | No       | `"true"` validates only        |
+| Field  | Type   | Required | Description                           |
+| ------ | ------ | -------- | ------------------------------------- |
+| file   | file   | Yes      | CSV with required columns             |
+| dryRun | string | No       | `"true"` to validate without creating |
 
-#### Response Body
+### Response Body
 
-```json id="hr012"
+```json
 {
   "totalRows": 50,
   "created": 47,
@@ -302,13 +256,11 @@ Imports employees from CSV.
 
 ---
 
-### POST `/api/v1/hr/employees/{employeeId}/terminate`
+## POST /api/v1/hr/employees/{employeeId}/terminate
 
-Terminates an employee.
+### Request Body
 
-#### Request Body
-
-```json id="hr013"
+```json
 {
   "lastWorkingDate": "2026-05-30",
   "reason": "Resignation",
@@ -317,9 +269,9 @@ Terminates an employee.
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr014"
+```json
 {
   "employeeId": "EMP1001",
   "status": "TERMINATED",
@@ -327,24 +279,21 @@ Terminates an employee.
 }
 ```
 
----
+````md id="hrxt92"
+## POST /api/v1/hr/employees/{employeeId}/rehire
 
-### POST `/api/v1/hr/employees/{employeeId}/rehire`
+### Request Body
 
-Rehires an employee.
-
-#### Request Body
-
-```json id="hr015"
+```json
 {
   "rejoiningDate": "2026-07-01",
   "designationId": "DES200"
 }
-```
+````
 
-#### Response Body
+### Response Body
 
-```json id="hr016"
+```json
 {
   "employeeId": "EMP1001",
   "status": "ACTIVE"
@@ -353,23 +302,22 @@ Rehires an employee.
 
 ---
 
-### POST `/api/v1/hr/employees/{employeeId}/transfer`
+## POST /api/v1/hr/employees/{employeeId}/transfer
 
-Transfers an employee.
+### Request Body
 
-#### Request Body
-
-```json id="hr017"
+```json
 {
   "departmentId": "D200",
   "managerId": "EMP1500",
+  "locationId": "wh-2-south",
   "effectiveDate": "2026-05-01"
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr018"
+```json
 {
   "employeeId": "EMP1001",
   "transferId": "trf_99"
@@ -378,13 +326,17 @@ Transfers an employee.
 
 ---
 
-### POST `/api/v1/hr/onboarding`
+# HR — Onboarding
 
-Starts onboarding workflow.
+---
 
-#### Request Body
+## POST /api/v1/hr/onboarding
 
-```json id="hr019"
+Starts an onboarding workflow for a new hire.
+
+### Request Body
+
+```json
 {
   "employeeId": "EMP1001",
   "templateId": "onb_default",
@@ -392,9 +344,9 @@ Starts onboarding workflow.
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr020"
+```json
 {
   "id": "onb_run_1",
   "employeeId": "EMP1001",
@@ -403,6 +355,26 @@ Starts onboarding workflow.
       "id": "tsk_1",
       "label": "Submit ID proof",
       "status": "pending"
+    },
+    {
+      "id": "tsk_2",
+      "label": "Sign offer letter",
+      "status": "pending"
+    },
+    {
+      "id": "tsk_3",
+      "label": "Sign FLSA policy",
+      "status": "pending"
+    },
+    {
+      "id": "tsk_4",
+      "label": "Submit W-4",
+      "status": "pending"
+    },
+    {
+      "id": "tsk_5",
+      "label": "Submit direct deposit form",
+      "status": "pending"
     }
   ]
 }
@@ -410,13 +382,11 @@ Starts onboarding workflow.
 
 ---
 
-### GET `/api/v1/hr/onboarding/{id}`
+## GET /api/v1/hr/onboarding/{id}
 
-Returns onboarding progress.
+### Response Body
 
-#### Response Body
-
-```json id="hr021"
+```json
 {
   "id": "onb_run_1",
   "employeeId": "EMP1001",
@@ -426,29 +396,31 @@ Returns onboarding progress.
       "id": "tsk_1",
       "label": "Submit ID proof",
       "status": "completed",
-      "completedAt": "2026-04-22T10:00:00+05:30"
+      "completedAt": "2026-04-22T10:00:00-04:00"
+    },
+    {
+      "id": "tsk_2",
+      "label": "Sign offer letter",
+      "status": "pending"
     }
   ]
 }
 ```
 
----
+````md id="hrq7mz"
+## PATCH /api/v1/hr/onboarding/{id}/tasks/{taskId}
 
-### PATCH `/api/v1/hr/onboarding/{id}/tasks/{taskId}`
+### Request Body
 
-Updates onboarding task status.
-
-#### Request Body
-
-```json id="hr022"
+```json
 {
   "status": "completed"
 }
-```
+````
 
-#### Response Body
+### Response Body
 
-```json id="hr023"
+```json id="0wt9n8"
 {
   "id": "tsk_2",
   "status": "completed"
@@ -457,120 +429,538 @@ Updates onboarding task status.
 
 ---
 
-### GET `/api/v1/hr/holidays`
+# HR — Holidays
 
-Returns holiday list.
+---
 
-#### Query Parameters
+## GET /api/v1/hr/holidays
 
-`year` (optional)
+### Query Parameters
 
-#### Response Body
+| Parameter | Required | Description          |
+| --------- | -------- | -------------------- |
+| year      | No       | Default current year |
+| state     | No       | Example: `FL`        |
 
-```json id="hr024"
+### Response Body
+
+```json id="xg10uq"
 {
   "year": 2026,
   "holidays": [
     {
       "id": "hol_1",
-      "date": "2026-01-26",
-      "name": "Republic Day",
-      "type": "national"
+      "date": "2026-07-04",
+      "name": "Independence Day",
+      "type": "federal",
+      "states": ["all"]
+    },
+    {
+      "id": "hol_2",
+      "date": "2026-11-26",
+      "name": "Thanksgiving",
+      "type": "federal",
+      "states": ["all"]
     }
   ]
 }
 ```
 
----
-
-### POST `/api/v1/hr/holidays`
-
-Creates a holiday.
-
-#### Request Body
-
-```json id="hr025"
-{
-  "date": "2026-08-15",
-  "name": "Independence Day",
-  "type": "national"
-}
-```
-
-#### Response Body
-
-```json id="hr026"
-{
-  "id": "hol_2",
-  "name": "Independence Day"
-}
-```
+**type enum:** `federal | state | company`
 
 ---
 
-### PATCH `/api/v1/hr/holidays/{id}`
+## POST /api/v1/hr/holidays
 
-Updates holiday.
+### Request Body
 
-#### Request Body
-
-```json id="hr027"
+```json id="r0h3ok"
 {
-  "name": "Independence Day (observed)"
+  "date": "2026-12-25",
+  "name": "Christmas Day",
+  "type": "federal",
+  "states": ["all"]
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr028"
+```json id="i5kv2q"
 {
-  "id": "hol_2",
+  "id": "hol_3",
+  "name": "Christmas Day"
+}
+```
+
+---
+
+## PATCH /api/v1/hr/holidays/{id}
+
+### Request Body
+
+```json id="td3g1n"
+{
+  "name": "Christmas Day (observed)"
+}
+```
+
+### Response Body
+
+```json id="f8e7y4"
+{
+  "id": "hol_3",
   "updated": true
 }
 ```
 
 ---
 
-### DELETE `/api/v1/hr/holidays/{id}`
+## DELETE /api/v1/hr/holidays/{id}
 
-Deletes holiday.
+### Response Body
 
-#### Response Body
-
-```json id="hr029"
+```json id="aym7x6"
 {
-  "id": "hol_2",
+  "id": "hol_3",
   "deleted": true
 }
 ```
 
 ---
 
-### GET `/api/v1/hr/payroll/runs/{id}`
+# HR — Leave Policies
 
-Returns payroll run details.
+---
 
-#### Response Body
+## GET /api/v1/hr/leave-policies
 
-```json id="hr030"
+### Response Body
+
+```json id="m0q5se"
 {
-  "id": "pr_2026_04",
-  "period": "2026-04",
+  "policies": [
+    {
+      "id": "lp_1",
+      "name": "Standard Full-Time",
+      "appliesTo": "FULL_TIME",
+      "types": [
+        {
+          "type": "vacation",
+          "annualDays": 18,
+          "accrualMethod": "monthly",
+          "carryForwardMax": 6
+        },
+        {
+          "type": "sick",
+          "annualDays": 10,
+          "accrualMethod": "upfront",
+          "carryForwardMax": 0
+        }
+      ]
+    }
+  ]
+}
+```
+
+````md id="hr8qkm"
+## POST /api/v1/hr/leave-policies
+
+### Request Body
+
+```json
+{
+  "name": "Hourly Workers",
+  "appliesTo": "HOURLY",
+  "types": [
+    {
+      "type": "sick",
+      "annualDays": 6,
+      "accrualMethod": "upfront",
+      "carryForwardMax": 0
+    }
+  ]
+}
+````
+
+### Response Body
+
+```json id="j2r7fd"
+{
+  "id": "lp_2",
+  "name": "Hourly Workers"
+}
+```
+
+---
+
+## PATCH /api/v1/hr/leave-policies/{id}
+
+### Request Body
+
+```json id="s4mv0p"
+{
+  "types": [
+    {
+      "type": "sick",
+      "annualDays": 8,
+      "accrualMethod": "upfront",
+      "carryForwardMax": 0
+    }
+  ]
+}
+```
+
+### Response Body
+
+```json id="c9u6et"
+{
+  "id": "lp_2",
+  "updated": true
+}
+```
+
+---
+
+## POST /api/v1/hr/leave-policies/{id}/assign
+
+### Request Body
+
+```json id="v0wx7n"
+{
+  "employeeIds": [
+    "EMP1001",
+    "EMP1002"
+  ]
+}
+```
+
+### Response Body
+
+```json id="m1k5za"
+{
+  "assigned": 2
+}
+```
+
+---
+
+# HR — Pay Components & Salary
+
+---
+
+## GET /api/v1/hr/pay-components
+
+Configured earnings + deductions.
+
+**Florida defaults**
+
+* REGULAR
+* OVERTIME
+* FEDERAL_INCOME_TAX
+* SOCIAL_SECURITY (6.2%)
+* MEDICARE (1.45%)
+
+### Response Body
+
+```json id="f6q3yo"
+{
+  "components": [
+    {
+      "id": "pc_regular",
+      "code": "REGULAR",
+      "name": "Regular Pay",
+      "kind": "earning",
+      "type": "calculated",
+      "taxable": true
+    },
+    {
+      "id": "pc_overtime",
+      "code": "OVERTIME",
+      "name": "Overtime Pay",
+      "kind": "earning",
+      "type": "calculated",
+      "taxable": true,
+      "multiplier": 1.5
+    },
+    {
+      "id": "pc_fed_income",
+      "code": "FEDERAL_INCOME_TAX",
+      "name": "Federal Income Tax",
+      "kind": "deduction",
+      "type": "tax_table"
+    },
+    {
+      "id": "pc_ss",
+      "code": "SOCIAL_SECURITY",
+      "name": "Social Security",
+      "kind": "deduction",
+      "type": "percentage",
+      "percentageOf": "grossPay",
+      "percentage": 6.2
+    },
+    {
+      "id": "pc_medicare",
+      "code": "MEDICARE",
+      "name": "Medicare",
+      "kind": "deduction",
+      "type": "percentage",
+      "percentageOf": "grossPay",
+      "percentage": 1.45
+    }
+  ]
+}
+```
+
+**kind enum:** `earning | deduction`
+**type enum:** `fixed | percentage | calculated | tax_table`
+
+---
+
+## POST /api/v1/hr/pay-components
+
+### Request Body
+
+```json id="p2dn9w"
+{
+  "code": "BONUS",
+  "name": "Performance Bonus",
+  "kind": "earning",
+  "type": "fixed",
+  "amount": 50000,
+  "taxable": true
+}
+```
+
+### Response Body
+
+```json id="z8cf6r"
+{
+  "id": "pc_bonus",
+  "code": "BONUS"
+}
+```
+````md id="hr5tqv"
+## PATCH /api/v1/hr/pay-components/{id}
+
+### Request Body
+
+```json
+{
+  "amount": 75000
+}
+````
+
+### Response Body
+
+```json id="v7m2xd"
+{
+  "id": "pc_bonus",
+  "updated": true
+}
+```
+
+---
+
+## GET /api/v1/hr/employees/{employeeId}/salary
+
+### Response Body — Hourly
+
+```json id="a3k8pl"
+{
+  "employeeId": "EMP1001",
+  "currency": "USD",
+  "payType": "hourly",
+  "hourlyRate": 2200,
+  "overtimeMultiplier": 1.5,
+  "effectiveFrom": "2026-04-01"
+}
+```
+
+### Response Body — Daily
+
+```json id="x4r9mu"
+{
+  "employeeId": "EMP1099",
+  "currency": "USD",
+  "payType": "daily",
+  "dailyRate": 18000,
+  "extraDayRate": 27000,
+  "effectiveFrom": "2026-04-01"
+}
+```
+
+---
+
+## PUT /api/v1/hr/employees/{employeeId}/salary
+
+Creates a new effective record (history is preserved).
+
+### Request Body
+
+```json id="n6q1st"
+{
+  "payType": "hourly",
+  "hourlyRate": 2400,
+  "overtimeMultiplier": 1.5,
+  "effectiveFrom": "2026-05-01"
+}
+```
+
+### Response Body
+
+```json id="b0z7yk"
+{
+  "revisionId": "sal_rev_55",
+  "effectiveFrom": "2026-05-01"
+}
+```
+
+---
+
+# HR — Payroll Runs
+
+**Lifecycle:** `draft → processing → awaiting_approval → approved → locked → paid`
+
+(Can be `cancelled` at any stage before `locked`)
+
+---
+
+## GET /api/v1/hr/payroll/runs
+
+### Query Parameters
+
+| Parameter | Required | Description      |
+| --------- | -------- | ---------------- |
+| year      | No       | Filter by year   |
+| status    | No       | Filter by status |
+
+### Response Body
+
+```json id="f8r2ow"
+{
+  "runs": [
+    {
+      "id": "pr_2026_04_p1",
+      "period": "2026-04-15_to_2026-04-28",
+      "status": "in_progress",
+      "employeesIncluded": 312,
+      "grossTotal": 48297700,
+      "netTotal": 38421500,
+      "currency": "USD",
+      "scheduledPayDate": "2026-04-30"
+    }
+  ]
+}
+```
+
+**status enum:**
+`draft | processing | awaiting_approval | approved | locked | paid | cancelled`
+
+---
+
+## POST /api/v1/hr/payroll/runs
+
+Creates a new payroll run.
+
+### Request Body
+
+```json id="h5u0ca"
+{
+  "period": "2026-04-15_to_2026-04-28",
+  "payDate": "2026-04-30",
+  "includeEmployeeFilter": {
+    "status": "ACTIVE",
+    "state": "FL"
+  }
+}
+```
+
+### Response Body
+
+```json id="r1e6vp"
+{
+  "id": "pr_2026_04_p1",
+  "status": "draft"
+}
+```
+
+---
+
+## POST /api/v1/hr/payroll/runs/{id}/process
+
+Calculates payroll (regular + overtime + federal tax + FICA).
+
+### Response Body
+
+```json id="q8k3lx"
+{
+  "id": "pr_2026_04_p1",
+  "status": "processing",
+  "estimatedCompletionAt": "2026-04-30T11:30:00-04:00"
+}
+```
+
+---
+
+## GET /api/v1/hr/payroll/runs/{id}
+
+Calculated breakdown. `lines[]` carry the Florida hourly/daily fields.
+
+### Response Body
+
+```json id="u2m7fd"
+{
+  "id": "pr_2026_04_p1",
+  "period": "2026-04-15_to_2026-04-28",
   "status": "awaiting_approval",
+  "currency": "USD",
   "summary": {
     "employees": 312,
-    "grossTotal": 2652000000,
-    "deductionsTotal": 555360000,
-    "netTotal": 2096640000,
-    "taxTotal": 367920000
+    "regularPayTotal": 41250000,
+    "overtimePayTotal": 7047700,
+    "grossTotal": 48297700,
+    "deductionsTotal": 9876200,
+    "federalIncomeTaxTotal": 5435000,
+    "socialSecurityTotal": 2994460,
+    "medicareTotal": 700317,
+    "netTotal": 38421500
   },
   "lines": [
     {
       "employeeId": "EMP1001",
       "name": "Priya Sharma",
-      "gross": 8500000,
-      "deductions": 1780000,
-      "net": 6720000
+      "payType": "hourly",
+      "regularHours": 80.0,
+      "overtimeHours": 4.5,
+      "regularPay": 176000,
+      "overtimePay": 14850,
+      "grossPay": 190850,
+      "deductions": {
+        "federalIncomeTax": 18800,
+        "socialSecurity": 11833,
+        "medicare": 2767,
+        "total": 33400
+      },
+      "netPay": 157450,
+      "disbursementMethod": "direct_deposit"
+    },
+    {
+      "employeeId": "EMP1099",
+      "name": "John Doe",
+      "payType": "daily",
+      "regularDays": 10,
+      "extraDays": 1,
+      "regularPay": 180000,
+      "overtimePay": 27000,
+      "grossPay": 207000,
+      "deductions": {
+        "federalIncomeTax": 20400,
+        "socialSecurity": 12834,
+        "medicare": 3002,
+        "total": 36236
+      },
+      "netPay": 170764,
+      "disbursementMethod": "check"
     }
   ]
 }
@@ -578,79 +968,642 @@ Returns payroll run details.
 
 ---
 
-### POST `/api/v1/hr/payroll/runs/{id}/approve`
+## POST /api/v1/hr/payroll/runs/{id}/approve
 
-Approves payroll run.
+Approves a processed run.
 
-#### Response Body
+### Response Body
 
-```json id="hr031"
+```json id="t9w4nh"
 {
-  "id": "pr_2026_04",
+  "id": "pr_2026_04_p1",
   "status": "approved",
-  "approvedAt": "2026-04-29T18:00:00+05:30"
+  "approvedAt": "2026-04-29T18:00:00-04:00"
+}
+```
+````md
+## POST /api/v1/hr/payroll/runs/{id}/lock
+
+Locks the payroll period. No more timesheet edits are accepted after lock.  
+Explicit lock confirmation required before disbursement.
+
+### Request Body
+
+```json
+{
+  "confirmed": true,
+  "confirmationCode": "LOCK-PR-2026-04-P1"
+}
+````
+
+### Response Body
+
+```json
+{
+  "id": "pr_2026_04_p1",
+  "status": "locked",
+  "lockedAt": "2026-04-29T18:30:00-04:00",
+  "lockedBy": "MGR-1042"
 }
 ```
 
 ---
 
-### POST `/api/v1/hr/payroll/runs/{id}/publish`
+## POST /api/v1/hr/payroll/runs/{id}/publish
 
-Publishes payroll and payslips.
+Publishes payslips, generates ACH file for direct-deposit employees, and generates check register for check employees.
 
-#### Response Body
+### Response Body
 
-```json id="hr032"
+```json
 {
-  "id": "pr_2026_04",
+  "id": "pr_2026_04_p1",
   "status": "paid",
   "payslipsPublished": 312,
-  "bankFileUrl": "https://files.zexovo.com/signed/bank_pr_2026_04?token=..."
+  "directDeposit": {
+    "employeeCount": 245,
+    "totalAmount": 38421500,
+    "achFileUrl": "https://files.zexovo.com/signed/ach_pr_2026_04_p1?token=...",
+    "achTraceNumber": "021000021000123",
+    "submittedAt": "2026-04-29T18:30:00-04:00",
+    "expectedSettlementDate": "2026-05-01"
+  },
+  "check": {
+    "employeeCount": 67,
+    "totalAmount": 9876200,
+    "checkRegisterUrl": "https://files.zexovo.com/signed/check_register_pr_2026_04_p1?token=..."
+  }
 }
 ```
 
 ---
 
-### GET `/api/v1/hr/announcements`
+## POST /api/v1/hr/payroll/runs/{id}/cancel
 
-Returns announcements.
+Cancels a payroll run in `draft`, `processing`, or `awaiting_approval` state.
+Locked or paid runs cannot be cancelled.
 
-#### Response Body
+### Response Body
 
-```json id="hr033"
+```json
+{
+  "id": "pr_2026_04_p1",
+  "status": "cancelled"
+}
+```
+````md
+## GET /api/v1/hr/payroll/runs/{id}/ach-file
+
+Re-fetches the ACH file in NACHA format.
+
+### Response Body
+
+```json
+{
+  "url": "https://files.zexovo.com/signed/ach_pr_2026_04_p1?token=...",
+  "expiresAt": "2026-04-29T19:30:00-04:00",
+  "format": "NACHA",
+  "totalAmount": 38421500,
+  "employeeCount": 245
+}
+````
+
+---
+
+## GET /api/v1/hr/payroll/runs/{id}/check-register
+
+Returns detailed check register for employees paid by check.
+
+### Response Body
+
+```json
+{
+  "url": "https://files.zexovo.com/signed/check_register_pr_2026_04_p1?token=...",
+  "expiresAt": "2026-04-29T19:30:00-04:00",
+  "totalAmount": 9876200,
+  "employeeCount": 67,
+  "checks": [
+    {
+      "employeeId": "EMP1099",
+      "employeeName": "John Doe",
+      "amount": 170764,
+      "memo": "Payroll 04/15-04/28",
+      "mailingAddress": "123 Main St, Orlando, FL 32801"
+    }
+  ]
+}
+```
+
+---
+
+## POST /api/v1/hr/payroll/runs/{id}/checks/print
+
+Marks checks as printed and assigns sequential check numbers.
+
+### Request Body
+
+```json
+{
+  "startCheckNumber": 1245,
+  "printedAt": "2026-04-30T10:00:00-04:00"
+}
+```
+
+### Response Body
+
+```json
+{
+  "checksPrinted": 67,
+  "lastCheckNumber": 1311
+}
+```
+````md id="taxcfg01"
+# HR — Tax Configuration (Florida / Federal)
+
+## GET /api/v1/hr/tax/slabs
+
+Returns federal income tax slabs by W-4 filing status, plus FICA rates.  
+Florida has no state income tax (`stateIncomeTax: false`).
+
+### Query Parameters
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| year | number | No | Default current year |
+| filingStatus | string | No | `single` \| `married_jointly` \| `married_separately` \| `head_of_household` |
+
+### Response Body
+
+```json
+{
+  "year": 2026,
+  "country": "US",
+  "state": "FL",
+  "stateIncomeTax": false,
+  "federal": {
+    "filingStatus": "single",
+    "slabs": [
+      { "minIncome": 0, "maxIncome": 1160000, "ratePercent": 10 },
+      { "minIncome": 1160001, "maxIncome": 4710500, "ratePercent": 12 },
+      { "minIncome": 4710501, "maxIncome": 10367500, "ratePercent": 22 },
+      { "minIncome": 10367501, "maxIncome": 19792500, "ratePercent": 24 },
+      { "minIncome": 19792501, "maxIncome": 25195000, "ratePercent": 32 },
+      { "minIncome": 25195001, "maxIncome": 62635000, "ratePercent": 35 },
+      { "minIncome": 62635001, "maxIncome": null, "ratePercent": 37 }
+    ]
+  },
+  "fica": {
+    "socialSecurity": {
+      "ratePercent": 6.2,
+      "wageBase": 17640000
+    },
+    "medicare": {
+      "ratePercent": 1.45,
+      "wageBase": null
+    }
+  },
+  "employerPaid": [
+    { "code": "FUTA", "ratePercent": 0.6, "wageBase": 700000 },
+    { "code": "FL_SUTA", "ratePercent": 2.7, "wageBase": 700000 }
+  ]
+}
+````
+
+---
+
+## PUT /api/v1/hr/tax/slabs
+
+Replaces tax slab configuration for a given year and filing status.
+
+### Request Body
+
+```json
+{
+  "year": 2026,
+  "filingStatus": "single",
+  "slabs": [
+    {
+      "minIncome": 0,
+      "maxIncome": 1160000,
+      "ratePercent": 10
+    }
+  ]
+}
+```
+
+### Response Body
+
+```json
+{
+  "year": 2026,
+  "filingStatus": "single",
+  "updated": true
+}
+```
+
+````md id="hrdocs02"
+## POST /api/v1/hr/tax/employees/{employeeId}/declarations
+
+Stores the employee's W-4 tax declaration.
+
+### Request Body
+
+```json
+{
+  "year": 2026,
+  "filingStatus": "single",
+  "exemptions": 1,
+  "additionalWithholding": 0,
+  "ssnLast4": "4421"
+}
+````
+
+### Response Body
+
+```json
+{
+  "id": "dec_4421",
+  "status": "submitted"
+}
+```
+
+---
+
+# HR — Bulk Documents
+
+## POST /api/v1/hr/documents/bulk-upload
+
+Uploads payslip / W-2 / 1099 batches.
+ZIP file must contain PDFs named `<employeeId>.pdf`.
+
+### Content Type
+
+`multipart/form-data`
+
+### Multipart Fields
+
+| Field        | Type   | Required | Description                                       |
+| ------------ | ------ | -------- | ------------------------------------------------- |
+| file         | file   | Yes      | ZIP of PDFs                                       |
+| documentType | string | Yes      | `payslip` | `w2` | `1095_c` | `1099`              |
+| period       | string | Yes      | `YYYY-MM` for payslips, `YYYY` for annual filings |
+
+### Response Body
+
+```json
+{
+  "totalFiles": 312,
+  "matched": 310,
+  "unmatched": 2,
+  "errors": [
+    {
+      "fileName": "EMP9999.pdf",
+      "code": "EMPLOYEE_NOT_FOUND"
+    }
+  ]
+}
+```
+````md id="hrcomp03"
+# HR — Compliance Documents & E-Signature
+
+## GET /api/v1/hr/compliance-documents
+
+Lists company compliance documents such as FLSA policy, geofence consent, handbook, NDA, and safety training.
+
+### Type Enum
+
+`flsa_policy` | `geofence_consent` | `handbook` | `nda` | `safety_training`
+
+### Response Body
+
+```json
+{
+  "documents": [
+    {
+      "id": "comp_flsa_2026",
+      "name": "FLSA Overtime Policy 2026",
+      "type": "flsa_policy",
+      "version": "1.2",
+      "effectiveDate": "2026-01-01",
+      "requiredFor": ["all"],
+      "signaturesRequired": true
+    },
+    {
+      "id": "comp_geo_2026",
+      "name": "Geofence Consent",
+      "type": "geofence_consent",
+      "version": "1.0",
+      "effectiveDate": "2026-04-01",
+      "requiredFor": ["hourly"],
+      "signaturesRequired": true
+    }
+  ]
+}
+````
+
+---
+
+## POST /api/v1/hr/compliance-documents/{id}/request-signature
+
+Requests signatures from selected employees.
+
+### Request Body
+
+```json
+{
+  "employeeIds": ["EMP1001", "EMP1002"],
+  "dueDate": "2026-05-15"
+}
+```
+
+### Response Body
+
+```json
+{
+  "requestsCreated": 2,
+  "requestIds": ["sig_1", "sig_2"]
+}
+```
+
+---
+
+## GET /api/v1/hr/signature-requests/{id}/audit-trail
+
+Returns full audit trail for a signature request.
+
+### Response Body
+
+```json
+{
+  "id": "sig_1",
+  "documentId": "comp_flsa_2026",
+  "employeeId": "EMP1001",
+  "events": [
+    {
+      "event": "requested",
+      "actor": "MGR-1042",
+      "at": "2026-04-26T09:00:00-04:00"
+    },
+    {
+      "event": "viewed",
+      "actor": "EMP1001",
+      "at": "2026-04-26T18:14:00-04:00",
+      "ipAddress": "73.45.21.18"
+    },
+    {
+      "event": "signed",
+      "actor": "EMP1001",
+      "at": "2026-04-27T10:14:00-04:00",
+      "ipAddress": "73.45.21.18",
+      "deviceFingerprint": "ios-9F2A-..."
+    }
+  ]
+}
+```
+````md id="hrrpt04"
+# HR — Reports
+
+## GET /api/v1/hr/reports/attendance
+
+Returns attendance analytics for a date range.
+
+### Query Parameters
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| from | string | Yes | Start date (`YYYY-MM-DD`) |
+| to | string | Yes | End date (`YYYY-MM-DD`) |
+| departmentId | string | No | Filter by department |
+| locationId | string | No | Filter by location |
+
+### Response Body
+
+```json
+{
+  "from": "2026-04-01",
+  "to": "2026-04-30",
+  "summary": {
+    "averageAttendance": 95.2,
+    "averageOnSitePercentage": 88.4,
+    "flaggedDays": 14,
+    "absences": 22
+  },
+  "byDepartment": [
+    {
+      "departmentId": "D100",
+      "departmentName": "Operations",
+      "attendance": 96.1
+    }
+  ]
+}
+````
+
+---
+
+## GET /api/v1/hr/reports/payroll
+
+Returns payroll summary for a payroll period.
+
+### Query Parameters
+
+| Name   | Type   | Required | Description                                        |
+| ------ | ------ | -------- | -------------------------------------------------- |
+| period | string | Yes      | `YYYY-MM` or full range `YYYY-MM-DD_to_YYYY-MM-DD` |
+
+### Response Body
+
+```json id="t7z8pl"
+{
+  "period": "2026-04-15_to_2026-04-28",
+  "currency": "USD",
+  "totalGross": 48297700,
+  "totalNet": 38421500,
+  "totalFederalIncomeTax": 5435000,
+  "totalSocialSecurity": 2994460,
+  "totalMedicare": 700317,
+  "byDepartment": [
+    {
+      "departmentId": "D100",
+      "gross": 19200000,
+      "net": 15300000
+    }
+  ],
+  "byPayType": [
+    {
+      "payType": "hourly",
+      "employees": 245,
+      "gross": 38421500
+    },
+    {
+      "payType": "daily",
+      "employees": 67,
+      "gross": 9876200
+    }
+  ]
+}
+```
+
+---
+
+## GET /api/v1/hr/reports/flsa
+
+Returns FLSA / overtime compliance report.
+
+### Query Parameters
+
+| Name      | Type   | Required | Description                    |
+| --------- | ------ | -------- | ------------------------------ |
+| weekStart | string | Yes      | Week start date (`YYYY-MM-DD`) |
+
+### Response Body
+
+```json id="y51mwp"
+{
+  "weekStart": "2026-04-20",
+  "totalEmployees": 312,
+  "overThreshold": 8,
+  "overtimeApprovedCount": 6,
+  "overtimeUnapprovedCount": 2,
+  "violations": [
+    {
+      "employeeId": "EMP1099",
+      "name": "John Doe",
+      "hoursWorked": 41.5,
+      "overtimeApproved": false
+    }
+  ]
+}
+```
+````md id="hrrpt05"
+## GET /api/v1/hr/reports/headcount
+
+Returns headcount trend and attrition metrics for a month range.
+
+### Query Parameters
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| from | string | Yes | Start month (`YYYY-MM`) |
+| to | string | Yes | End month (`YYYY-MM`) |
+
+### Response Body
+
+```json
+{
+  "from": "2026-01",
+  "to": "2026-04",
+  "trend": [
+    {
+      "period": "2026-01",
+      "headcount": 298,
+      "joined": 8,
+      "left": 3
+    },
+    {
+      "period": "2026-02",
+      "headcount": 302,
+      "joined": 6,
+      "left": 2
+    }
+  ],
+  "attritionRateAnnualized": 4.6
+}
+````
+
+---
+
+## POST /api/v1/hr/reports/{reportType}/export
+
+Triggers an asynchronous report export.
+
+### Request Body
+
+```json
+{
+  "format": "xlsx",
+  "filters": {
+    "from": "2026-04-01",
+    "to": "2026-04-30"
+  }
+}
+```
+
+### Response Body
+
+```json
+{
+  "exportId": "exp_771",
+  "status": "processing"
+}
+```
+
+---
+
+## GET /api/v1/hr/reports/exports/{exportId}
+
+Returns export job status and download link when ready.
+
+### Response Body
+
+```json
+{
+  "exportId": "exp_771",
+  "status": "ready",
+  "downloadUrl": "https://files.zexovo.com/signed/exp_771?token=...",
+  "expiresAt": "2026-04-26T12:00:00-04:00"
+}
+```
+
+````md id="hrann06"
+# HR — Announcements
+
+## GET /api/v1/hr/announcements
+
+Returns all published or scheduled announcements.
+
+### Response Body
+
+```json
 {
   "announcements": [
     {
       "id": "ann_1",
       "title": "Q1 Town Hall",
-      "body": "Join us on April 30 at 4 PM IST.",
+      "body": "Join us on April 30 at 4 PM EDT.",
       "audience": "all",
-      "publishedAt": "2026-04-26T09:00:00+05:30"
+      "publishedAt": "2026-04-26T09:00:00-04:00"
     }
   ]
 }
-```
+````
 
 ---
 
-### POST `/api/v1/hr/announcements`
+## POST /api/v1/hr/announcements
 
-Creates announcement.
+Creates or schedules a new announcement.
 
-#### Request Body
+### Audience Examples
 
-```json id="hr034"
+* `all`
+* `department:D100`
+* `location:wh-4-north`
+* `payType:hourly`
+
+### Request Body
+
+```json
 {
   "title": "Office closure on Friday",
   "body": "All offices closed for maintenance.",
   "audience": "department:D100",
-  "publishAt": "2026-04-29T09:00:00+05:30"
+  "publishAt": "2026-04-29T09:00:00-04:00"
 }
 ```
 
-#### Response Body
+### Response Body
 
-```json id="hr035"
+```json
 {
   "id": "ann_2",
   "status": "scheduled"
@@ -659,57 +1612,73 @@ Creates announcement.
 
 ---
 
-### DELETE `/api/v1/hr/announcements/{id}`
+## DELETE /api/v1/hr/announcements/{id}
 
-Deletes announcement.
+Deletes an announcement.
 
-#### Response Body
+### Response Body
 
-```json id="hr036"
+```json
 {
   "id": "ann_2",
   "deleted": true
 }
 ```
-## Tax Documents Endpoints
-
-### GET `/api/v1/tax-documents?year=2025-26`
-
-Lists available tax documents for the employee. Drives the **View Tax Docs** quick action.
-
-#### Query Parameters
-
-* `year` (optional, default = current fiscal year)
-
-#### Response Body
-
-```json
-{
-  "year": "2025-26",
-  "documents": [
-    {
-      "id": "tax_991",
-      "name": "Form 16 — FY 2025-26",
-      "type": "form_16",
-      "issuedOn": "2026-04-15",
-      "fileSizeBytes": 184231
-    }
-  ]
-}
-```
 
 ---
 
-### GET `/api/v1/tax-documents/{id}/download`
+# HR — Audit Logs
 
-Returns a short-lived signed URL to download a tax document.
+## GET /api/v1/hr/audit-logs
 
-#### Response Body
+Returns paginated audit logs for HR operations.
+
+### Query Parameters
+
+| Name       | Type   | Required | Description                                                            |
+| ---------- | ------ | -------- | ---------------------------------------------------------------------- |
+| actorId    | string | No       | Filter by actor                                                        |
+| entityType | string | No       | `employee` | `payroll_run` | `policy` | `signature_request` | `salary` |
+| entityId   | string | No       | Filter by entity ID                                                    |
+| from       | string | No       | Start datetime                                                         |
+| to         | string | No       | End datetime                                                           |
+| page       | number | No       | Page number                                                            |
+| size       | number | No       | Page size                                                              |
+
+### Response Body
 
 ```json
 {
-  "id": "tax_991",
-  "url": "https://files.zexovo.com/signed/tax_991?token=...",
-  "expiresAt": "2026-04-26T11:14:00+05:30"
+  "data": [
+    {
+      "id": "log_8821",
+      "actorId": "EMP_HR_1",
+      "actorName": "Anita Rao",
+      "action": "PAYROLL_RUN_LOCKED",
+      "entityType": "payroll_run",
+      "entityId": "pr_2026_04_p1",
+      "before": {
+        "status": "approved"
+      },
+      "after": {
+        "status": "locked"
+      },
+      "occurredAt": "2026-04-29T18:30:00-04:00",
+      "ipAddress": "10.4.2.18"
+    }
+  ],
+  "page": 1,
+  "size": 50,
+  "total": 1421
 }
+```
+
+
+
+
+
+
+
+
+```
 ```
