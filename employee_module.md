@@ -1,5 +1,8 @@
 ## Endpoints
 
+### Employee Module
+Employee CRUD (used by Manager / HR) plus the /employee/me family for an employee's self-service profile, tax info, bank account, contract, notification preferences, biometric toggle, and emergency contacts. Florida hourly/daily wage context — money in cents USD.
+
 ### GET `/api/v1/employees?page=1&size=20&search=priya&status=ACTIVE&department=Operations`
 
 Lists / searches employees.
