@@ -725,7 +725,7 @@ Deletes an emergency contact.
 | primary  | boolean | Primary contact flag     |
 
 ---
-````md
+
 # Employee Signature Requests APIs
 
 Compliance documents awaiting employee acknowledgment or signature  
